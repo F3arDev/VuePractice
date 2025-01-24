@@ -16,6 +16,6 @@ export const postTask = async ({ body }: Request, res: Response) => {
 		const ResponseTask = await insertTask(body);
 		res.send(ResponseTask);
 	} catch (error) {
-		handleHttp(res, "Error al insertar un dato", error);
+		handleHttp(res, error, '');
 	}
 };

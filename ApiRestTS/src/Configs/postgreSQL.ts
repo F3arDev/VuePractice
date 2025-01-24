@@ -1,6 +1,6 @@
 import { configDotenv } from "dotenv";
 import { DataSource } from "typeorm";
-import { TaskSchema } from "../Models/Task.Entity";
+import { TaskModel } from "../Models/TaskModel";
 
 // Carga las variables de entorno desde el archivo .env
 configDotenv();
@@ -18,7 +18,7 @@ export const AppDataSource = new DataSource({
 	url: DB_URL,
 	synchronize: false, // Evita cambios automáticos en la base de datos
 	logging: true, // Muestra las consultas en la consola
-	entities: [TaskSchema],
+	entities: [TaskModel],
 	// migrations: [],
 });
 
