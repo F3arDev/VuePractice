@@ -1,43 +1,38 @@
 import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, BeforeUpdate } from "typeorm";
-import {
-	IsInt,
-	IsBoolean,
-	Min,
-	Max,
-	IsDefined,
-	IsNotEmpty
-
-} from 'class-validator';
+import { IsInt, IsBoolean, Min, Max, IsDefined, IsNotEmpty } from 'class-validator';
 import ITarea from "../Interfaces/Task.interface";
 import { validateEntity } from "../utils/validateEntity";
-
+import { MessageHandle } from '../utils/Message.Handle';
+const msg = new MessageHandle();
 @Entity("Task") // Nombre de la tabla en la BD
 export class TaskModel implements ITarea {
-	[key: string]: any;
+	//PrimaryKey
 	@PrimaryGeneratedColumn()
 	id!: number;
 
+	//Tarea
 	@Column({ type: "varchar", length: 50, nullable: false })
-	@IsDefined({ message: "La tarea es requerida." }) // Campo requerido
-	@IsNotEmpty({ message: "La tarea no puede estar vacía." }) // Campo no vacío
+	@IsDefined(msg.ErrorIsDefined('tarea')) // Campo requerido
+	@IsNotEmpty(msg.ErrorIsNotEmpty('tarea')) // Campo no vacío
 	tarea!: string;
 
+	//Numero
 	@Column({ type: "int", nullable: false })
-	@IsDefined({ message: "El número es requerido." }) // Campo requerido
-	@IsInt({ message: "El número debe ser un entero." })
-	@Min(1, { message: "El número debe ser al menos 1." })
-	@Max(100, { message: "El número no puede exceder 100." })
+	@IsDefined(msg.ErrorIsDefined('num')) // Campo requerido
+	@IsInt(msg.ErrorIsInt('num')) // Debe ser un entero
+	@Min(1, msg.ErrorMinValue('num', 1)) // Valor mínimo
+	@Max(100, msg.ErrorMaxValue('num', 100)) // Valor máximo
 	num!: number;
 
+	//Estado
 	@Column({ type: "boolean", nullable: false })
-	@IsDefined({ message: "El estado es requerido." }) // Campo requerido
-	@IsBoolean({ message: "El estado debe ser un valor booleano (true o false)." })
+	@IsDefined(msg.ErrorIsDefined('estado')) // Campo requerido
+	@IsBoolean(msg.ErrorIsBoolean('estado')) // Debe ser un booleano
 	estado!: boolean;
 
 	@BeforeInsert()
 	@BeforeUpdate()
 	async validated() {
-
 		await validateEntity(this);
 	}
 }
